@@ -2,6 +2,7 @@
 
 [![Python 3.10+](https://img.shields.io/badge/Python-3.10%2B-blue.svg)](https://www.python.org/)
 [![PyTorch 2.0+](https://img.shields.io/badge/PyTorch-2.0%2B-ee4c2c.svg)](https://pytorch.org/)
+[![CI](https://github.com/GopiChoudhary19/mini-gpt-from-scratch/actions/workflows/ci.yml/badge.svg)](https://github.com/GopiChoudhary19/mini-gpt-from-scratch/actions)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](LICENSE)
 
 A clean, modular, and educational implementation of the **Decoder-Only Transformer Architecture (GPT)** written from scratch using PyTorch. 
@@ -59,7 +60,7 @@ Where $M$ is the causal triangular mask preventing token lookahead during traini
 
 ### 1. Clone & Install Dependencies
 ```bash
-git clone https://github.com/gopigkc1910-commits/mini-gpt-from-scratch.git
+git clone https://github.com/GopiChoudhary19/mini-gpt-from-scratch.git
 cd mini-gpt-from-scratch
 pip install -r requirements.txt
 ```
