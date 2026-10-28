@@ -49,3 +49,27 @@ def test_generation_crops_context_beyond_block_size():
     idx = torch.zeros((1, 1), dtype=torch.long)
     generated = model.generate(idx, max_new_tokens=20, top_k=5)
     assert generated.shape == (1, 21)
+
+
+def test_greedy_generation_with_zero_temperature_is_deterministic():
+    model = small_model(vocab_size=50, block_size=16).eval()
+    idx = torch.zeros((1, 1), dtype=torch.long)
+    a = model.generate(idx, max_new_tokens=8, temperature=0)
+    b = model.generate(idx, max_new_tokens=8, temperature=0)
+    assert torch.equal(a, b)
+
+
+def test_generation_rejects_empty_context():
+    import pytest
+    model = small_model(vocab_size=50, block_size=16).eval()
+    with pytest.raises(ValueError):
+        model.generate(torch.zeros((1, 0), dtype=torch.long), max_new_tokens=3)
+
+
+def test_estimate_loss_reports_both_splits_and_restores_train_mode():
+    from train import estimate_loss
+    model = small_model(vocab_size=50, block_size=8)
+    data = torch.randint(0, 50, (200,))
+    losses = estimate_loss(model, {"train": data, "val": data}, block_size=8, batch_size=4, device="cpu", eval_iters=2)
+    assert set(losses) == {"train", "val"}
+    assert model.training
