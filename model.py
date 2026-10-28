@@ -122,11 +122,18 @@ class MiniGPT(nn.Module):
 
     @torch.no_grad()
     def generate(self, idx, max_new_tokens, temperature=1.0, top_k=None):
+        if idx.size(1) == 0:
+            raise ValueError("generate needs at least one context token")
         for _ in range(max_new_tokens):
             # Crop context if it exceeds block_size
             idx_cond = idx if idx.size(1) <= self.block_size else idx[:, -self.block_size:]
             logits, _ = self(idx_cond)
-            logits = logits[:, -1, :] / temperature
+            logits = logits[:, -1, :]
+            if temperature <= 0:
+                # temperature 0 means greedy decoding; dividing by it would give NaN probabilities
+                idx = torch.cat((idx, logits.argmax(dim=-1, keepdim=True)), dim=1)
+                continue
+            logits = logits / temperature
             
             if top_k is not None:
                 v, _ = torch.topk(logits, min(top_k, logits.size(-1)))
